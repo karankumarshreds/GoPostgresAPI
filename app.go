@@ -33,4 +33,5 @@ func (a *App) Run(addr string) {
 	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")
 	a.Router.HandleFunc("/product/{id}", a.getProduct).Methods("GET")
 	a.Router.HandleFunc("/product", a.createProduct).Methods("POST")
+	a.Router.HandleFunc("/product/{id}", a.updateProduct).Methods("PUT")
 }

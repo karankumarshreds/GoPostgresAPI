@@ -51,7 +51,7 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
 	var p Product 
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&p)
+	err     := decoder.Decode(&p)
 	if err != nil {
 		respondWithError(w, http.StatusBadGateway, "Invalid request payload")
 	}
@@ -60,6 +60,25 @@ func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 	}
 	respondWithJSON(w, http.StatusCreated, p)
+}
+
+func (a *App) updateProduct(w http.ResponseWriter, r *http.Request) {
+	vars     := mux.Vars(r)
+	id, err  := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+	}
+	var p Product 
+	p.ID = id
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&p)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+	}
+	err = p.updateProduct(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+	}
 }
 
 
