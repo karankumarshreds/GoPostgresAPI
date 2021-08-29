@@ -38,12 +38,14 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 
 	if err1 != nil || err2 != nil {
 		respondWithError(w, http.StatusBadRequest, "Provide valid query parameters")
+		return 
 	}
 
 	p := Product{}
 	products, err := p.getProducts(a.DB, skip, count)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return 
 	}
 	respondWithJSON(w, http.StatusOK, products)
 }
@@ -54,10 +56,12 @@ func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
 	err     := decoder.Decode(&p)
 	if err != nil {
 		respondWithError(w, http.StatusBadGateway, "Invalid request payload")
+		return
 	}
 	err = p.createProduct(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return 
 	}
 	respondWithJSON(w, http.StatusCreated, p)
 }
@@ -67,6 +71,7 @@ func (a *App) updateProduct(w http.ResponseWriter, r *http.Request) {
 	id, err  := strconv.Atoi(vars["id"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+		return
 	}
 	var p Product 
 	p.ID = id
@@ -74,11 +79,29 @@ func (a *App) updateProduct(w http.ResponseWriter, r *http.Request) {
 	err = decoder.Decode(&p)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return 
 	}
 	err = p.updateProduct(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return 
 	}
+}
+
+func (a *App) deleteProduct(w http.ResponseWriter, r *http.Request) {
+	vars    := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+		return 
+	}
+	p := Product{ID: id}
+	err = p.deleteProduct(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
 
