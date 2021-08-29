@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 	"encoding/json"
+	"strconv"
 	"log"
 	"fmt"
 	"os"
@@ -105,6 +106,27 @@ func TestCreateProduct(t *testing.T) {
 	}
 }
 
+func TestGetProduct(t *testing.T) {
+
+	clearTable()
+
+	addProducts(1)
+	req, _ := http.NewRequest("GET", "/product/1", nil)
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("Expected response %v got %v", http.StatusOK, rr.Code)
+	}
+
+	var m map[string] string
+	json.Unmarshal(rr.Body.Bytes(), &m)
+	if m["name"] != "test product" {
+		t.Errorf("Expected product name to be 'test product' got %v", m["name"])
+	}
+
+}
+
 // *************************** // 
 //      HELPER FUNCTIONS 
 // *************************** // 
@@ -141,3 +163,12 @@ func clearTable() {
 // 	a.Router.ServeHTTP(rr, req)	
 // 	return rr
 // }
+
+func addProducts(count int) {
+	if count < 1 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		a.DB.Exec("INSERT INTO products(name, price) VALUES($1, $2)", "test product" + strconv.Itoa(count), 100)
+	}
+}
