@@ -26,12 +26,18 @@ func (a *App) Initialize(user, password, dbname string) {
 	}
 
 	a.Router = mux.NewRouter()
+	a.initializeRoutes()
+}
+
+// methods to initialize all the routes 
+func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")	
+	a.Router.HandleFunc("/product/{id}", a.getProduct).Methods("GET")
+	a.Router.HandleFunc("/product", a.createProduct).Methods("POST")
+	a.Router.HandleFunc("/product/{id}", a.updateProduct).Methods("PUT")
 }
 
 // method to run the app instance 
 func (a *App) Run(addr string) {
-	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")
-	a.Router.HandleFunc("/product/{id}", a.getProduct).Methods("GET")
-	a.Router.HandleFunc("/product", a.createProduct).Methods("POST")
-	a.Router.HandleFunc("/product/{id}", a.updateProduct).Methods("PUT")
+	
 }
