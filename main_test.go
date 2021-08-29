@@ -33,19 +33,19 @@ func TestMain(m *testing.M) {
 
 // T is a type passed to Test functions to manage test state and support formatted test logs.
 func TestEmptyTable (t *testing.T) {
+	
 	clearTable()
 	req, _ := http.NewRequest("GET", "/products", nil)
-	// response := executeRequest(req)
-	// rw here is the "rr" (response recorder) to record the response 
-	rw := httptest.NewRecorder()
-	a.Router.ServeHTTP(rw, req)	
+	rr := executeRequest(req)
+	
 	// checking the response status code 
-	if http.StatusOK != rw.Code {
+	if http.StatusOK != rr.Code {
 		// this method ends the running tests 
-		t.Errorf("Expected response %v got %v", http.StatusOK, rw.Code)
+		t.Errorf("Expected response %v got %v", http.StatusOK, rr.Code)
 	}
+
 	// checking the body response
-	body := rw.Body.String();
+	body := rr.Body.String();
 	if body != "[]" {
 		t.Errorf("Expected an empty array. Got %v", body)
 	}
@@ -53,7 +53,7 @@ func TestEmptyTable (t *testing.T) {
 }	
 
 // *************************** // 
-// HELPER FUNCTIONS 
+//      HELPER FUNCTIONS 
 // *************************** // 
 
 // makes sure the table exists by creating one 
@@ -77,10 +77,14 @@ func clearTable() {
 	a.DB.Exec("ALTER SEQUENCE products_id_seq RESTART WITH 1")
 }
 
+
 // The httptest.ResponseRecorder is an implementation of http.ResponseWriter
 // As "rw http.ResponseWriter" assemnles the HTTP server's response by writing to it 
 // which we send back the to the HTTP CLient. Similarly, httptest.ResponseRecorder 
 // is used to record the response that the handler will write for the client's request 
-// func executeRequest(req *http.Request) *httptest.ResponseRecorder {
-// 	httptest.NewRecoer
-// }
+// rw here is the "rr" (response recorder) to record the response 
+func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)	
+	return rr
+}
