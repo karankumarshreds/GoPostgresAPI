@@ -87,7 +87,7 @@ func TestCreateProduct(t *testing.T) {
 	a.Router.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusCreated {
-		t.Errorf("Expected response code %v got %v", )
+		t.Errorf("Expected response code %v got %v", http.StatusCreated, rr.Code)
 	}
 
 	var m map[string] interface{}
