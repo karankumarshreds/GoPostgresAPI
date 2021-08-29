@@ -2,6 +2,7 @@ package main_test
 
 import (
 	"testing"
+	"encoding/json"
 	"log"
 	"fmt"
 	"os"
@@ -36,7 +37,9 @@ func TestEmptyTable (t *testing.T) {
 	
 	clearTable()
 	req, _ := http.NewRequest("GET", "/products", nil)
-	rr := executeRequest(req)
+	// rr := executeRequest(req)
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)	
 	
 	// checking the response status code 
 	if http.StatusOK != rr.Code {
@@ -51,6 +54,26 @@ func TestEmptyTable (t *testing.T) {
 	}
 
 }	
+
+func TestGetNonExistentProduct(t *testing.T) {
+
+	clearTable()
+
+	req, _ := http.NewRequest("GET", "/products/1", nil)
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusNotFound {
+		t.Errorf("Expected response %v got %v", http.StatusNotFound, rr.Code)
+	}
+
+	var m map[string] string 
+	// decode the json to the map
+	json.Unmarshal(rr.Body.Bytes(), &m)
+	if m["error"] != "Product not found" {
+		t.Errorf("Expected the 'error key of the response to set to 'Product not found got %v", m["error"])
+	}
+}
 
 // *************************** // 
 //      HELPER FUNCTIONS 
@@ -83,8 +106,8 @@ func clearTable() {
 // which we send back the to the HTTP CLient. Similarly, httptest.ResponseRecorder 
 // is used to record the response that the handler will write for the client's request 
 // rw here is the "rr" (response recorder) to record the response 
-func executeRequest(req *http.Request) *httptest.ResponseRecorder {
-	rr := httptest.NewRecorder()
-	a.Router.ServeHTTP(rr, req)	
-	return rr
-}
+// func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+// 	rr := httptest.NewRecorder()
+// 	a.Router.ServeHTTP(rr, req)	
+// 	return rr
+// }
