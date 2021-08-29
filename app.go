@@ -31,4 +31,5 @@ func (a *App) Initialize(user, password, dbname string) {
 // method to run the app instance 
 func (a *App) Run(addr string) {
 	a.Router.HandleFunc("/product/{id}", a.getProduct).Methods("GET")
+	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")
 }
