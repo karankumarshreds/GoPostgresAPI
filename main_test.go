@@ -127,6 +127,30 @@ func TestGetProduct(t *testing.T) {
 
 }
 
+func TestUpdateProduct(t *testing.T) {
+
+	clearTable()
+	addProducts(1)
+	jsonStr := []byte(`{"price":1000}`)
+	req, _ := http.NewRequest("PUT", "products/1", bytes.NewBuffer(jsonStr))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
+	
+	if rr.Code != http.StatusOK {
+		t.Errorf("Expected response %v got %v", http.StatusOK, rr.Code)
+	}
+	var m map[string] interface{}
+	json.Unmarshal(rr.Body.Bytes(), &m)
+	if m["price"] != 1000 {
+		t.Errorf("Expected product price to be 1000 got %v", m["price"])
+	}
+	if m["id"] != 1 {
+		t.Errorf("Expected product ID to be 1 got %v", m["id"])
+	}
+
+}
+
 // *************************** // 
 //      HELPER FUNCTIONS 
 // *************************** // 
