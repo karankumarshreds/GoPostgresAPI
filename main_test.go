@@ -130,6 +130,7 @@ func TestGetProduct(t *testing.T) {
 func TestUpdateProduct(t *testing.T) {
 
 	clearTable()
+
 	addProducts(1)
 	jsonStr := []byte(`{"price":1000}`)
 	req, _ := http.NewRequest("PUT", "products/1", bytes.NewBuffer(jsonStr))
@@ -147,6 +148,27 @@ func TestUpdateProduct(t *testing.T) {
 	}
 	if m["id"] != 1 {
 		t.Errorf("Expected product ID to be 1 got %v", m["id"])
+	}
+
+}
+
+func TestDeleteProduct(t *testing.T) {
+
+	clearTable()
+	addProducts(1)
+	req, _ := http.NewRequest("DELETE", "products/1", nil)
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("Expected response %v got %v", http.StatusOK, rr.Code)
+	}
+	// making a get request now to check if the product has been deleted or not 
+	req, _ = http.NewRequest("GET", "products/1", nil)
+	rr = httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
+	if rr.Code != http.StatusNotFound {
+		t.Errorf("Expected response %v got %v", http.StatusNotFound, rr.Code)
 	}
 
 }
