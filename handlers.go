@@ -48,6 +48,20 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, products)
 }
 
+func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
+	var p Product 
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&p)
+	if err != nil {
+		respondWithError(w, http.StatusBadGateway, "Invalid request payload")
+	}
+	err = p.createProduct(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+	}
+	respondWithJSON(w, http.StatusCreated, p)
+}
+
 
 // **********************
 //    HELPER METHODS 
