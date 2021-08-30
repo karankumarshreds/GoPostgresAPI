@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 		// os.Getenv("DB_NAME"),
 		"mux",
 		"password",
-		"mux_db"
+		"mux_db",
 	)
 
 	ensureTableExists()
