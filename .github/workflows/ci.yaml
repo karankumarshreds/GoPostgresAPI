@@ -17,11 +17,11 @@ jobs:
           POSTGRES_USER: ${{ secrets.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ secrets.DB_NAME }}
-        # options: >-
-        #   --health-cmd pg_isready
-        #   --health-interval 10s
-        #   --health-timeout 5s
-        #   --health-retries 5
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Check out code into the directory
@@ -34,7 +34,8 @@ jobs:
           go-version: 1.17
 
       - name: Run migrations
-        run: migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
+        run: $ curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$platform-amd64.tar.gz | tar xvz
+        run: ./migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
 
       - name: Test
         run: go test -v ./...
