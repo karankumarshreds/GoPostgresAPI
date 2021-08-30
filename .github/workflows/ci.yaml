@@ -34,8 +34,9 @@ jobs:
           go-version: 1.17
 
       - name: Run migrations
-        run: $ curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$platform-amd64.tar.gz | tar xvz
-        run: ./migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
+        run:
+          $ curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$platform-amd64.tar.gz | tar xvz \
+          && ./migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
 
       - name: Test
         run: go test -v ./...
