@@ -17,20 +17,24 @@ jobs:
           POSTGRES_USER: ${{ secrets.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ secrets.DB_NAME }}
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        # options: >-
+        #   --health-cmd pg_isready
+        #   --health-interval 10s
+        #   --health-timeout 5s
+        #   --health-retries 5
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code into the directory
+        uses: actions/checkout@v2
 
       # setup and install go for the runner
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
+
+      - name: Run migrations
+        run: migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
 
       - name: Test
         run: go test -v ./...
