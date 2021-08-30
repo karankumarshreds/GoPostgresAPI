@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 func TestEmptyTable (t *testing.T) {
 	
 	clearTable()
-	req, _ := http.NewRequest("GET", "/products", nil)
+	req, _ := http.NewRequest("GET", "/products?count=5&skip=5", nil)
 	// rr := executeRequest(req)
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)	
@@ -61,7 +61,7 @@ func TestGetNonExistentProduct(t *testing.T) {
 
 	clearTable()
 
-	req, _ := http.NewRequest("GET", "/products/1", nil)
+	req, _ := http.NewRequest("GET", "/product/1", nil)
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
 
@@ -121,7 +121,7 @@ func TestGetProduct(t *testing.T) {
 
 	var m map[string] string
 	json.Unmarshal(rr.Body.Bytes(), &m)
-	if m["name"] != "test product" {
+	if m["name"] != "test product1" {
 		t.Errorf("Expected product name to be 'test product' got %v", m["name"])
 	}
 
@@ -130,10 +130,10 @@ func TestGetProduct(t *testing.T) {
 func TestUpdateProduct(t *testing.T) {
 
 	clearTable()
-
 	addProducts(1)
+
 	jsonStr := []byte(`{"price":1000}`)
-	req, _ := http.NewRequest("PUT", "products/1", bytes.NewBuffer(jsonStr))
+	req, _ := http.NewRequest("PUT", "/product/1", bytes.NewBuffer(jsonStr))
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
@@ -141,12 +141,14 @@ func TestUpdateProduct(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Errorf("Expected response %v got %v", http.StatusOK, rr.Code)
 	}
+
 	var m map[string] interface{}
 	json.Unmarshal(rr.Body.Bytes(), &m)
-	if m["price"] != 1000 {
+
+	if m["price"] != float64(1000) {
 		t.Errorf("Expected product price to be 1000 got %v", m["price"])
 	}
-	if m["id"] != 1 {
+	if m["id"] != float64(1) {
 		t.Errorf("Expected product ID to be 1 got %v", m["id"])
 	}
 
@@ -156,7 +158,7 @@ func TestDeleteProduct(t *testing.T) {
 
 	clearTable()
 	addProducts(1)
-	req, _ := http.NewRequest("DELETE", "products/1", nil)
+	req, _ := http.NewRequest("DELETE", "/product/1", nil)
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
 
@@ -164,7 +166,7 @@ func TestDeleteProduct(t *testing.T) {
 		t.Errorf("Expected response %v got %v", http.StatusOK, rr.Code)
 	}
 	// making a get request now to check if the product has been deleted or not 
-	req, _ = http.NewRequest("GET", "products/1", nil)
+	req, _ = http.NewRequest("GET", "/product/1", nil)
 	rr = httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
 	if rr.Code != http.StatusNotFound {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"log"
 	"database/sql"
 
@@ -40,5 +41,5 @@ func (a *App) initializeRoutes() {
 
 // method to run the app instance 
 func (a *App) Run(addr string) {
-	
+	log.Fatal(http.ListenAndServe(addr, a.Router))
 }

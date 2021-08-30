@@ -1,6 +1,7 @@
 package main 
 
 import (
+	"fmt"
 	"database/sql"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -17,15 +18,18 @@ func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	p := Product{ID: id}
 	err = p.getProduct(a.DB)
+
 	if err != nil {
 		switch err {
 			case sql.ErrNoRows:
 				respondWithError(w, http.StatusNotFound, "Product not found")
+				return
 			default:
 				respondWithError(w, http.StatusBadGateway, err.Error())
-		}
-		return
+				return
+			}
 	}
+
 	respondWithJSON(w, http.StatusOK, p)
 }
 
@@ -37,6 +41,7 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 	skip,  err2 := strconv.Atoi(skipQuery)
 
 	if err1 != nil || err2 != nil {
+		fmt.Println(err1, err2)
 		respondWithError(w, http.StatusBadRequest, "Provide valid query parameters")
 		return 
 	}
@@ -82,6 +87,7 @@ func (a *App) updateProduct(w http.ResponseWriter, r *http.Request) {
 		return 
 	}
 	err = p.updateProduct(a.DB)
+	respondWithJSON(w, http.StatusOK, p)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return 
