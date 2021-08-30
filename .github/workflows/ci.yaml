@@ -36,10 +36,11 @@ jobs:
         with:
           go-version: 1.17
 
+      - name: Download migrate CLI
+        run: curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
+
       - name: Run migrations
-        run:
-          $ curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$platform-amd64.tar.gz | tar xvz \
-          && ./migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
+        run: ./migrate -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
 
       - name: Test
         run: go test -v ./...
