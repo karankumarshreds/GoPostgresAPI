@@ -20,9 +20,12 @@ var a main.App
 func TestMain(m *testing.M) {
 	fmt.Println("Test main function")
 	a.Initialize(
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
+		// os.Getenv("DB_USERNAME"),
+		// os.Getenv("DB_PASSWORD"),
+		// os.Getenv("DB_NAME"),
+		"mux",
+		"password",
+		"mux_db"
 	)
 
 	ensureTableExists()
