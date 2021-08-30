@@ -27,6 +27,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+        ports:
+          - 5432:5432
+
     steps:
       - name: Check out code into the directory
         uses: actions/checkout@v2
@@ -42,8 +45,7 @@ jobs:
 
       - name: Run migrations
         run: |
-          ./migrate.linux-amd64 -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path /migrations up
-          ls && pwd && ls ../
+          ./migrate.linux-amd64 -database postgres://mux:password@localhost:5432/mux_db?sslmode=disable -path ./migrations up
 
       - name: Test
         run: go test -v ./...
