@@ -8,12 +8,23 @@ jobs:
   test:
     name: unit-tests
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        # docker image
+        image: postgres:12
+        env:
+          POSTGRES_USER: mux
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: mux_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v2
-
-      - uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: '11'
 
       # setup and install go for the runner
       - name: Set up Go
