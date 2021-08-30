@@ -14,9 +14,13 @@ jobs:
         # docker image
         image: postgres:12
         env:
-          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: mux
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: mux_db
+          # POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          # POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # POSTGRES_DB: ${{ secrets.DB_NAME }}
+
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
