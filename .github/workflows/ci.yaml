@@ -11,6 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: '11'
+
       # setup and install go for the runner
       - name: Set up Go
         uses: actions/setup-go@v2
